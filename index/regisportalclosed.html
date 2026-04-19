@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>MNCHS Senior Scouting</title>
+    <link rel="icon" type="image/x-icon" href="/images/org-logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="regisportalclosed.css">
+<link rel="stylesheet" href="../headerfooter/headerfooter.css">
+</head>
+<body>
+
+    <!-- OVERLAY -->
+    <div class="overlay" id="overlay"></div>
+<div id="header-placeholder"></div>
+
+    <!-- CLEAN MAIN CONTENT - READY FOR YOUR CONTENT -->
+    <main class="main-content">
+        <p>Registration is currently <strong>closed.</strong> Follow our Facebook page to get notified when recruitment opens!</p>
+    </main>
+
+    <!-- Footer - FIXED POSITION -->
+<div id="footer-placeholder"></div>
+
+    <script>
+        // SIDEBAR FUNCTIONALITY
+        const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            // Animate hamburger
+            const spans = hamburger.querySelectorAll('span');
+            if (sidebar.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translate(6px, 6px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        }
+
+        // Event listeners
+        hamburger.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+
+        // Close sidebar when clicking nav links
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                // Reset hamburger animation
+                const spans = hamburger.querySelectorAll('span');
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            });
+        });
+    </script>
+<script>
+        // Load Header (includes sidebar!) & Footer
+        fetch('../headerfooter/header.html')
+            .then(r => r.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+                initNavigation();
+            });
+
+        fetch('../headerfooter/footer.html')
+            .then(r => r.text())
+            .then(data => {
+                document.getElementById('footer-placeholder').innerHTML = data;
+            });
+
+        // UNIVERSAL NAVIGATION
+        function setActiveNav() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const pageMap = {
+                'index.html': 'home',
+                'about.html': 'about',
+                'resources.html': 'resources',
+                'leadership.html': 'leadership',
+                'history.html': 'history',
+                'shop.html': 'shop'
+            };
+            const currentDataPage = pageMap[currentPage] || 'home';
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.page === currentDataPage) btn.classList.add('active');
+            });
+
+            document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === currentDataPage) link.classList.add('active');
+            });
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const hamburger = document.getElementById('hamburger');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            const spans = hamburger.querySelectorAll('span');
+            if (sidebar.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translate(6px, 6px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+                document.body.style.overflow = 'hidden';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        function initNavigation() {
+            setActiveNav();
+            document.getElementById('hamburger').onclick = toggleSidebar;
+            document.getElementById('overlay').onclick = toggleSidebar;
+            
+            document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.remove('active');
+                    document.getElementById('overlay').classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+            
+            window.addEventListener('popstate', setActiveNav);
+        }
+
+        window.addEventListener('load', () => setTimeout(initNavigation, 100));
+    </script>
+</body>
+</html>
